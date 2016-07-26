@@ -11,7 +11,7 @@ if (TYPO3_MODE == 'BE') {
 		'Confengine',
 		'',
 		[
-			'Form' => 'show',
+			'Form' => 'show, save',
 		],
 		[
 			'access' => 'user,group',
@@ -19,4 +19,6 @@ if (TYPO3_MODE == 'BE') {
 			'labels' => 'LLL:EXT:confengine/Resources/Private/Language/locallang_mod.xml',
 		]
 	);
+
+    TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('mod.web_list.deniedNewTables := addToList(tx_confengine_form)');
 }

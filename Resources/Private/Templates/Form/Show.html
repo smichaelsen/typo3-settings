@@ -1,0 +1,17 @@
+<html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers">
+
+<f:layout name="BackendModule"/>
+
+<f:section name="header">
+	<div class="typo3-docheader-functions">&nbsp;</div>
+	<div class="typo3-docheader-buttons">&nbsp;</div>
+</f:section>
+
+<f:section name="body">
+	<f:form action="save" method="post">
+		{form -> f:format.raw()}
+		<f:form.button>Mach's!</f:form.button>
+	</f:form>
+</f:section>
+
+</html>
