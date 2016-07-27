@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2015-01-29T15:09:06Z">
+		<header/>
+		<body>
+		<trans-unit id="tca_info_fields.available_placeholders" xml:space="preserve">
+			<source>Available placeholders</source>
+		</trans-unit>
+		</body>
+	</file>
+</xliff>
