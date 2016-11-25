@@ -15,7 +15,7 @@ if (TYPO3_MODE == 'BE') {
 		],
 		[
 			'access' => 'user,group',
-			'icon' => 'EXT:confengine/ext_icon.png',
+			'icon' => 'EXT:confengine/Resources/Public/settings.svg',
 			'labels' => 'LLL:EXT:confengine/Resources/Private/Language/locallang_mod.xml',
 		]
 	);
