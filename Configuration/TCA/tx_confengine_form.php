@@ -8,6 +8,9 @@ return [
         'title' => 'Configuration',
         'hideTable' => true,
         'label' => '',
+        'security' => [
+            'ignoreRootLevelRestriction' => true,
+        ],
     ],
     'types' => [
         '0' => ['showitem' => ''],
