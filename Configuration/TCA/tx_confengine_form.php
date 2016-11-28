@@ -6,6 +6,7 @@ if (!defined('TYPO3_MODE')) {
 return [
     'ctrl' => [
         'title' => 'Configuration',
+        'hideTable' => true,
         'label' => '',
     ],
     'types' => [
