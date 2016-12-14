@@ -2,9 +2,10 @@
 namespace Smichaelsen\Confengine\Service;
 
 use TYPO3\CMS\Core\Registry;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ConfigurationService
+class ConfigurationService implements SingletonInterface
 {
 
     const REGISTRY_NAMESPACE = 'Smichaelsen\\Confengine';
@@ -15,8 +16,13 @@ class ConfigurationService
     public function getAllConfiguration()
     {
         $configuration = [];
-        foreach (array_keys($GLOBALS['TCA']['tx_confengine_form']['columns']) as $columnKey) {
-            $configuration[$columnKey] = $this->getRegistry()->get(self::REGISTRY_NAMESPACE, $columnKey);
+        foreach ($GLOBALS['TCA']['tx_confengine_form']['columns'] as $columnKey => $columnConfiguration) {
+            $value = $this->getRegistry()->get(self::REGISTRY_NAMESPACE, $columnKey);
+            $isMultiValueField = in_array($columnConfiguration['config']['type'], ['select', 'group']);
+            if ($isMultiValueField && empty($value)) {
+                $value = [];
+            }
+            $configuration[$columnKey] = $value;
         }
         return $configuration;
     }
