@@ -1,0 +1,64 @@
+language: php
+
+php:
+  - 5.5
+  - 5.6
+  - 7
+
+env:
+  - TYPO3_VERSION="^7.6.0"
+  - TYPO3_VERSION="^8.6.0"
+  - TYPO3_VERSION="dev-master"
+
+matrix:
+  exclude:
+    - php: 5.5
+      env: TYPO3_VERSION="dev-master"
+    - php: 5.6
+      env: TYPO3_VERSION="dev-master"
+    - php: 5.5
+      env: TYPO3_VERSION="^8.6.0"
+    - php: 5.6
+      env: TYPO3_VERSION="^8.6.0"
+
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - parallel
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  - phpenv config-rm xdebug.ini
+  - composer self-update
+  - composer --version
+
+before_script:
+  - composer require typo3/cms="$TYPO3_VERSION"
+  - git checkout composer.json
+  - export TYPO3_PATH_WEB=$PWD/.Build/Web
+
+script:
+  - >
+    echo;
+    echo "Running base build for TYPO3 $TYPO3_VERSION";
+
+after_script:
+  - >
+    if [ -n "$TRAVIS_TAG" ] && [ -n "$TYPO3_ORG_USERNAME" ] && [ -n "$TYPO3_ORG_PASSWORD" ]; then
+      echo -e "Preparing upload of release ${TRAVIS_TAG} to TER\n"
+      curl -sSL https://raw.githubusercontent.com/alrra/travis-after-all/1.4.4/lib/travis-after-all.js | node
+      if [ $? -eq 0 ]; then
+        # Cleanup before we upload
+        git reset --hard HEAD && git clean -fx
+        # Upload
+        TAG_MESSAGE=`git tag -n10 -l $TRAVIS_TAG | sed 's/^[0-9.]*[ ]*//g'`
+        echo "Uploading release ${TRAVIS_TAG} to TER"
+        mv ../typo3-pagepath ../pagepath
+        .Build/bin/upload . "$TYPO3_ORG_USERNAME" "$TYPO3_ORG_PASSWORD" "$TAG_MESSAGE"
+      fi;
+    fi;

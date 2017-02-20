@@ -18,13 +18,15 @@ class ConfigurationService implements SingletonInterface
         static $configuration;
         if (!is_array($configuration)) {
             $configuration = [];
-            foreach ($GLOBALS['TCA']['tx_settings_form']['columns'] as $columnKey => $columnConfiguration) {
-                $value = $this->getRegistry()->get(self::REGISTRY_NAMESPACE, $columnKey);
-                $isMultiValueField = in_array($columnConfiguration['config']['type'], ['select', 'group']);
-                if ($isMultiValueField && empty($value)) {
-                    $value = [];
+            if (is_array($GLOBALS['TCA']['tx_settings_form']['columns'])) {
+                foreach ($GLOBALS['TCA']['tx_settings_form']['columns'] as $columnKey => $columnConfiguration) {
+                    $value = $this->getRegistry()->get(self::REGISTRY_NAMESPACE, $columnKey);
+                    $isMultiValueField = in_array($columnConfiguration['config']['type'], ['select', 'group']);
+                    if ($isMultiValueField && empty($value)) {
+                        $value = [];
+                    }
+                    $configuration[$columnKey] = $value;
                 }
-                $configuration[$columnKey] = $value;
             }
         }
         return $configuration;

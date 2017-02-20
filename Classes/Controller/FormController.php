@@ -14,17 +14,60 @@ class FormController extends ActionController
 {
 
     /**
+     * @var FormDataCompiler
+     */
+    protected $formDataCompiler;
+
+    /**
+     * @var FormResultCompiler
+     */
+    protected $formResultCompiler;
+
+    /**
+     * @var NodeFactory
+     */
+    protected $nodeFactory;
+
+    /**
+     * @var PageRenderer
+     */
+    protected $pageRenderer;
+
+    /**
+     * @param FormResultCompiler $formResultCompiler
+     */
+    public function injectFormResultCompiler(FormResultCompiler $formResultCompiler)
+    {
+        $this->formResultCompiler = $formResultCompiler;
+    }
+
+    /**
+     * @param PageRenderer $pageRenderer
+     */
+    public function injectPageRenderer(PageRenderer $pageRenderer)
+    {
+        $this->pageRenderer = $pageRenderer;
+    }
+
+    /**
+     * @param NodeFactory $nodeFactory
+     */
+    public function injectNodeFactory(NodeFactory $nodeFactory)
+    {
+        $this->nodeFactory = $nodeFactory;
+    }
+
+    /**
      *
      */
     public function showAction()
     {
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
-        $pageRenderer->setCharSet('utf-8');
-        $pageRenderer->setLanguage($GLOBALS['LANG']->lang);
+        $this->pageRenderer->setCharSet('utf-8');
+        $this->pageRenderer->setLanguage($GLOBALS['LANG']->lang);
         $this->view->assignMultiple([
-            'header' => $pageRenderer->render(PageRenderer::PART_HEADER),
+            'header' => $this->pageRenderer->render(PageRenderer::PART_HEADER),
             'form' => $this->generateForm(),
-            'footer' => $pageRenderer->render(PageRenderer::PART_FOOTER),
+            'footer' => $this->pageRenderer->render(PageRenderer::PART_FOOTER),
         ]);
     }
 
@@ -45,18 +88,17 @@ class FormController extends ActionController
      */
     protected function generateForm()
     {
-        $formDataCompiler = GeneralUtility::makeInstance(FormDataCompiler::class, GeneralUtility::makeInstance(TcaDatabaseRecord::class));
         $formDataCompilerInput = [
             'tableName' => 'tx_settings_form',
             'vanillaUid' => 0,
             'command' => 'new',
             'returnUrl' => '',
         ];
-        $formData = $formDataCompiler->compile($formDataCompilerInput);
+        $formData = $this->getFormDataCompiler()->compile($formDataCompilerInput);
         $formData['renderType'] = 'outerWrapContainer';
         $formData['databaseRow'] = array_merge($formData['databaseRow'], $this->getConfigurationService()->getAllConfiguration());
-        $form = GeneralUtility::makeInstance(NodeFactory::class)->create($formData)->render()['html'];
-        $form .= GeneralUtility::makeInstance(FormResultCompiler::class)->printNeededJSFunctions();
+        $form = $this->nodeFactory->create($formData)->render()['html'];
+        $form .= $this->formResultCompiler->printNeededJSFunctions();
         return $form;
     }
 
@@ -70,6 +112,17 @@ class FormController extends ActionController
             $configurationService = GeneralUtility::makeInstance(ConfigurationService::class);
         }
         return $configurationService;
+    }
+
+    /**
+     * @return FormDataCompiler
+     */
+    protected function getFormDataCompiler()
+    {
+        if (!$this->formDataCompiler instanceof FormDataCompiler) {
+            $this->formDataCompiler = GeneralUtility::makeInstance(FormDataCompiler::class, GeneralUtility::makeInstance(TcaDatabaseRecord::class));
+        }
+        return $this->formDataCompiler;
     }
 
 }
