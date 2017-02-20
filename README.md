@@ -7,7 +7,7 @@ Because you haven't enough places in TYPO3 to configure stuff, right?
 confengine offers a new backend module in which extensions can offer configuration options. Why?
 Ever since I was missing a spot where editors (non-admins) can do global configuration.
  
-![Screenshot](Documentation/Images/Screenshot_Overview?raw=true "Screenshot")
+![Screenshot](Documentation/Images/Screenshot_Overview.png?raw=true "Screenshot")
 
 ## How to use
 
