@@ -42,6 +42,10 @@ Example (in `Configuration/TCA/Overrides/tx_confengine_form.php`):
     
 ### Read configuration
 
+All configured values are available as TypoScript constants in `plugin.tx_confengine`.
+
+You can also access tha values via PHP:
+
     $configurationService = GeneralUtility::makeInstance(\Smichaelsen\Confengine\Service\ConfigurationService::class);
     $allConfiguration = $configurationService->getAllConfiguration();
 

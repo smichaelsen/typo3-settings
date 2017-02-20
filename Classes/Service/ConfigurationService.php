@@ -15,14 +15,17 @@ class ConfigurationService implements SingletonInterface
      */
     public function getAllConfiguration()
     {
-        $configuration = [];
-        foreach ($GLOBALS['TCA']['tx_confengine_form']['columns'] as $columnKey => $columnConfiguration) {
-            $value = $this->getRegistry()->get(self::REGISTRY_NAMESPACE, $columnKey);
-            $isMultiValueField = in_array($columnConfiguration['config']['type'], ['select', 'group']);
-            if ($isMultiValueField && empty($value)) {
-                $value = [];
+        static $configuration;
+        if (!is_array($configuration)) {
+            $configuration = [];
+            foreach ($GLOBALS['TCA']['tx_confengine_form']['columns'] as $columnKey => $columnConfiguration) {
+                $value = $this->getRegistry()->get(self::REGISTRY_NAMESPACE, $columnKey);
+                $isMultiValueField = in_array($columnConfiguration['config']['type'], ['select', 'group']);
+                if ($isMultiValueField && empty($value)) {
+                    $value = [];
+                }
+                $configuration[$columnKey] = $value;
             }
-            $configuration[$columnKey] = $value;
         }
         return $configuration;
     }
@@ -34,6 +37,36 @@ class ConfigurationService implements SingletonInterface
     public function set($key, $value)
     {
         $this->getRegistry()->set(self::REGISTRY_NAMESPACE, $key, $value);
+    }
+
+    public function injectTypoScriptConstants()
+    {
+        static $isInjected = false;
+        if (!$isInjected) {
+            if (count($this->getAllConfiguration())) {
+                $constants = 'plugin.tx_confengine {' . LF;
+                foreach ($this->getAllConfiguration() as $key => $value) {
+                    if (empty($value)) {
+                        continue;
+                    }
+                    if (is_array($value)) {
+                        $value = join(',', $value);
+                    }
+                    if(strstr($value, PHP_EOL)) {
+                        $constants .= $key . ' ( ' . LF . $value . LF . ')' . LF;
+                    } else {
+                        $constants .= $key . ' = ' . $value . LF;
+                    }
+                }
+                $constants .= '}' . LF;
+                \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
+                    'confengine',
+                    'constants',
+                    $constants
+                );
+            }
+            $isInjected = true;
+        }
     }
 
     /**
