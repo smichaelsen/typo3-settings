@@ -10,7 +10,7 @@ $EM_CONF[$_EXTKEY] = array(
     'author_company' => 'app-zap',
     'constraints' => array(
         'depends' => array(
-            'typo3' => '7.6.2-7.99.99',
+            'typo3' => '7.6.2-8.6.99',
         ),
     ),
 );
