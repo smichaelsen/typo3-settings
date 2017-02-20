@@ -1,5 +1,5 @@
 <?php
-namespace Smichaelsen\Confengine\UserFunction;
+namespace Smichaelsen\Settings\UserFunction;
 
 use TYPO3\CMS\Lang\LanguageService;
 

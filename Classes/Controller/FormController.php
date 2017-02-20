@@ -1,11 +1,12 @@
 <?php
-namespace Smichaelsen\Confengine\Controller;
+namespace Smichaelsen\Settings\Controller;
 
-use Smichaelsen\Confengine\Service\ConfigurationService;
+use Smichaelsen\Settings\Service\ConfigurationService;
 use TYPO3\CMS\Backend\Form\FormDataCompiler;
 use TYPO3\CMS\Backend\Form\FormDataGroup\TcaDatabaseRecord;
 use TYPO3\CMS\Backend\Form\FormResultCompiler;
 use TYPO3\CMS\Backend\Form\NodeFactory;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
@@ -17,7 +18,14 @@ class FormController extends ActionController
      */
     public function showAction()
     {
-        $this->view->assign('form', $this->generateForm());
+        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $pageRenderer->setCharSet('utf-8');
+        $pageRenderer->setLanguage($GLOBALS['LANG']->lang);
+        $this->view->assignMultiple([
+            'header' => $pageRenderer->render(PageRenderer::PART_HEADER),
+            'form' => $this->generateForm(),
+            'footer' => $pageRenderer->render(PageRenderer::PART_FOOTER),
+        ]);
     }
 
     /**
@@ -25,7 +33,7 @@ class FormController extends ActionController
      */
     public function saveAction()
     {
-        $forms = GeneralUtility::_POST('data')['tx_confengine_form'];
+        $forms = GeneralUtility::_POST('data')['tx_settings_form'];
         foreach ($forms[array_keys($forms)[0]] as $fieldName => $fieldValue) {
             $this->getConfigurationService()->set($fieldName, $fieldValue);
         }
@@ -39,7 +47,7 @@ class FormController extends ActionController
     {
         $formDataCompiler = GeneralUtility::makeInstance(FormDataCompiler::class, GeneralUtility::makeInstance(TcaDatabaseRecord::class));
         $formDataCompilerInput = [
-            'tableName' => 'tx_confengine_form',
+            'tableName' => 'tx_settings_form',
             'vanillaUid' => 0,
             'command' => 'new',
             'returnUrl' => '',

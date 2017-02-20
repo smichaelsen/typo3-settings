@@ -1,8 +1,7 @@
 <html data-namespace-typo3-fluid="true" xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers">
 
-<f:be.container loadJQuery="true" includeRequireJsModules="{
-	0:'TYPO3/CMS/Backend/FormEngine'
-}">
+{header -> f:format.raw()}
+<f:be.container>
 	<div class="typo3-fullDoc">
 		<div id="typo3-docbody">
 			<div id="typo3-inner-docbody">
@@ -11,5 +10,6 @@
 		</div>
 	</div>
 </f:be.container>
+{footer -> f:format.raw()}
 
 </html>

@@ -1,19 +1,19 @@
 {
-    "name": "smichaelsen/confengine",
+    "name": "smichaelsen/settings",
     "description": "User friendly configuration module for editors",
     "type": "typo3-cms-extension",
     "license": "GPL-2.0+",
     "autoload": {
         "psr-4": {
-            "Smichaelsen\\Confengine\\": "Classes/"
+            "Smichaelsen\\Settings\\": "Classes/"
         }
     },
     "require": {
         "typo3/cms-core": "7.6.*"
     },
     "replace": {
-        "confengine": "self.version",
-        "typo3-ter/confengine": "self.version"
+        "settings": "self.version",
+        "typo3-ter/settings": "self.version"
     },
     "extra": {
         "branch-alias": {

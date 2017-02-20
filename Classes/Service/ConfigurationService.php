@@ -1,5 +1,5 @@
 <?php
-namespace Smichaelsen\Confengine\Service;
+namespace Smichaelsen\Settings\Service;
 
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -8,7 +8,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ConfigurationService implements SingletonInterface
 {
 
-    const REGISTRY_NAMESPACE = 'Smichaelsen\\Confengine';
+    const REGISTRY_NAMESPACE = 'Smichaelsen\\Settings';
 
     /**
      * @return array
@@ -18,7 +18,7 @@ class ConfigurationService implements SingletonInterface
         static $configuration;
         if (!is_array($configuration)) {
             $configuration = [];
-            foreach ($GLOBALS['TCA']['tx_confengine_form']['columns'] as $columnKey => $columnConfiguration) {
+            foreach ($GLOBALS['TCA']['tx_settings_form']['columns'] as $columnKey => $columnConfiguration) {
                 $value = $this->getRegistry()->get(self::REGISTRY_NAMESPACE, $columnKey);
                 $isMultiValueField = in_array($columnConfiguration['config']['type'], ['select', 'group']);
                 if ($isMultiValueField && empty($value)) {
@@ -44,7 +44,7 @@ class ConfigurationService implements SingletonInterface
         static $isInjected = false;
         if (!$isInjected) {
             if (count($this->getAllConfiguration())) {
-                $constants = 'plugin.tx_confengine {' . LF;
+                $constants = 'plugin.tx_settings {' . LF;
                 foreach ($this->getAllConfiguration() as $key => $value) {
                     if (empty($value)) {
                         continue;
@@ -60,7 +60,7 @@ class ConfigurationService implements SingletonInterface
                 }
                 $constants .= '}' . LF;
                 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
-                    'confengine',
+                    'settings',
                     'constants',
                     $constants
                 );
