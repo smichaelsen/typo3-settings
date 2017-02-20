@@ -154,9 +154,12 @@ class UnitTestsBootstrap
         }
         $classLoader = require $classLoaderFilepath;
 
-        Bootstrap::getInstance()
-            ->initializeClassLoader($classLoader)
-            ->baseSetup();
+        $bootstrap = Bootstrap::getInstance();
+        $bootstrap->initializeClassLoader($classLoader);
+        if (method_exists($bootstrap, 'setRequestType')) {
+            $bootstrap->setRequestType(4);
+        }
+        $bootstrap->baseSetup();
 
         return $this;
     }

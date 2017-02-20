@@ -1,5 +1,7 @@
 # settings - TYPO3 Extension
 
+[![Build Status](https://travis-ci.org/smichaelsen/typo3-settings.svg?branch=master)](https://travis-ci.org/smichaelsen/typo3-settings)
+
 Because you haven't enough places in TYPO3 to configure stuff, right?
 
 ## What it does

@@ -38,9 +38,7 @@ before_script:
   - export TYPO3_PATH_WEB=$PWD/.Build/Web
 
 script:
-  - >
-    echo;
-    echo "Running base build for TYPO3 $TYPO3_VERSION";
+  - ./.Build/bin/phpunit
 
 after_script:
   - >
