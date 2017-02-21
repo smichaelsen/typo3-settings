@@ -46,7 +46,7 @@ Example (in `Configuration/TCA/Overrides/tx_settings_form.php`):
 
 All configured values are available as TypoScript constants in `plugin.tx_settings`.
 
-You can also access tha values via PHP:
+You can also access the values via PHP:
 
     $configurationService = GeneralUtility::makeInstance(\Smichaelsen\Settings\Service\ConfigurationService::class);
     $allConfiguration = $configurationService->getAllConfiguration();
