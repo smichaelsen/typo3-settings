@@ -53,9 +53,6 @@ class ConfigurationService implements SingletonInterface
             if (count($this->getAllConfiguration())) {
                 $constants = 'plugin.tx_settings {' . LF;
                 foreach ($this->getAllConfiguration() as $key => $value) {
-                    if (empty($value)) {
-                        continue;
-                    }
                     if (is_array($value)) {
                         $value = join(',', $value);
                     }
