@@ -37,9 +37,6 @@ before_script:
   - git checkout composer.json
   - export TYPO3_PATH_WEB=$PWD/.Build/Web
 
-script:
-  - ./.Build/bin/phpunit
-
 after_script:
   - >
     if [ -n "$TRAVIS_TAG" ] && [ -n "$TYPO3_ORG_USERNAME" ] && [ -n "$TYPO3_ORG_PASSWORD" ]; then
