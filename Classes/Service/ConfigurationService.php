@@ -11,13 +11,17 @@ class ConfigurationService implements SingletonInterface
     const REGISTRY_NAMESPACE = 'Smichaelsen\\Settings';
 
     /**
+     * @var array
+     */
+    protected $configuration;
+
+    /**
      * @return array
      */
     public function getAllConfiguration()
     {
-        static $configuration;
-        if (!is_array($configuration)) {
-            $configuration = [];
+        if (!is_array($this->configuration)) {
+            $this->configuration = [];
             if (is_array($GLOBALS['TCA']['tx_settings_form']['columns'])) {
                 foreach ($GLOBALS['TCA']['tx_settings_form']['columns'] as $columnKey => $columnConfiguration) {
                     $value = $this->getRegistry()->get(self::REGISTRY_NAMESPACE, $columnKey);
@@ -25,11 +29,11 @@ class ConfigurationService implements SingletonInterface
                     if ($isMultiValueField && empty($value)) {
                         $value = [];
                     }
-                    $configuration[$columnKey] = $value;
+                    $this->configuration[$columnKey] = $value;
                 }
             }
         }
-        return $configuration;
+        return $this->configuration;
     }
 
     /**
@@ -38,6 +42,7 @@ class ConfigurationService implements SingletonInterface
      */
     public function set($key, $value)
     {
+        $this->configuration[$key] = $value;
         $this->getRegistry()->set(self::REGISTRY_NAMESPACE, $key, $value);
     }
 

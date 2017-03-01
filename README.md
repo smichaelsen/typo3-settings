@@ -53,4 +53,4 @@ You can also access the values via PHP:
 
 ## Known issues
 
-Right now javascript is not loaded correclty which intimidates a lot of form functionality like tabs, rich text editing, file uploads etc.
+Inline fields do not work yet, that includes FAL file upload fields.

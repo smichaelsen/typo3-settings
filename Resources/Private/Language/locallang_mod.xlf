@@ -12,7 +12,7 @@
 			<source>Edit the global configuration of your website</source>
 		</trans-unit>
 		<trans-unit id="mlang_tabs_tab">
-			<source>Website Configuration</source>
+			<source>Website settings</source>
 		</trans-unit>
 		</body>
 	</file>
