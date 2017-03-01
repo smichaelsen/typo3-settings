@@ -6,14 +6,14 @@ if (!defined('TYPO3_MODE')) {
 
 if (TYPO3_MODE == 'BE') {
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule(
-        'user',
-        'sitesettings',
-        'after:setup',
+        'web',
+        'settings',
+        '',
         '',
         [
             'routeTarget' => \Smichaelsen\Settings\Controller\FormController::class . '::mainAction',
             'access' => 'group,user',
-            'name' => 'user_sitesettings',
+            'name' => 'web_settings',
             'labels' => [
                 'tabs_images' => [
                     'tab' => 'EXT:settings/Resources/Public/settings.svg',

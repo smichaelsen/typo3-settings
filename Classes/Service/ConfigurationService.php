@@ -3,6 +3,8 @@ namespace Smichaelsen\Settings\Service;
 
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\TypoScript\TemplateService;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ConfigurationService implements SingletonInterface
@@ -16,15 +18,16 @@ class ConfigurationService implements SingletonInterface
     protected $configuration;
 
     /**
+     * @param int
      * @return array
      */
-    public function getAllConfiguration()
+    public function getAllConfiguration($pid)
     {
         if (!is_array($this->configuration)) {
             $this->configuration = [];
             if (is_array($GLOBALS['TCA']['tx_settings_form']['columns'])) {
                 foreach ($GLOBALS['TCA']['tx_settings_form']['columns'] as $columnKey => $columnConfiguration) {
-                    $value = $this->getRegistry()->get(self::REGISTRY_NAMESPACE, $columnKey);
+                    $value = $this->getRegistry()->get(self::REGISTRY_NAMESPACE . '\\' . $pid, $columnKey);
                     $isMultiValueField = in_array($columnConfiguration['config']['type'], ['select', 'group']);
                     if ($isMultiValueField && empty($value)) {
                         $value = [];
@@ -37,22 +40,28 @@ class ConfigurationService implements SingletonInterface
     }
 
     /**
+     * @param int $pid
      * @param string $key
      * @param mixed $value
      */
-    public function set($key, $value)
+    public function set($pid, $key, $value)
     {
         $this->configuration[$key] = $value;
-        $this->getRegistry()->set(self::REGISTRY_NAMESPACE, $key, $value);
+        $this->getRegistry()->set(self::REGISTRY_NAMESPACE . '\\' . $pid, $key, $value);
     }
 
-    public function injectTypoScriptConstants()
+    /**
+     * @param array $parameters
+     * @param TemplateService $templateService
+     */
+    public function injectTypoScriptConstants($parameters = null, $templateService = null)
     {
         static $isInjected = false;
         if (!$isInjected) {
-            if (count($this->getAllConfiguration())) {
+            $rootPageUid = $templateService->absoluteRootLine[0]['uid'];
+            if (count($this->getAllConfiguration($rootPageUid))) {
                 $constants = 'plugin.tx_settings {' . LF;
-                foreach ($this->getAllConfiguration() as $key => $value) {
+                foreach ($this->getAllConfiguration($rootPageUid) as $key => $value) {
                     if (is_array($value)) {
                         $value = join(',', $value);
                     }
@@ -63,7 +72,7 @@ class ConfigurationService implements SingletonInterface
                     }
                 }
                 $constants .= '}' . LF;
-                \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
+                ExtensionManagementUtility::addTypoScript(
                     'settings',
                     'constants',
                     $constants

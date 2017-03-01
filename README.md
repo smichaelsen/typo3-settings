@@ -49,7 +49,7 @@ All configured values are available as TypoScript constants in `plugin.tx_settin
 You can also access the values via PHP:
 
     $configurationService = GeneralUtility::makeInstance(\Smichaelsen\Settings\Service\ConfigurationService::class);
-    $allConfiguration = $configurationService->getAllConfiguration();
+    $allConfiguration = $configurationService->getAllConfiguration($rootPageUid);
 
 ## Known issues
 

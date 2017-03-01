@@ -16,26 +16,37 @@ use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\HttpUtility;
 
 class FormController extends EditDocumentController
 {
 
     public function mainAction(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $forms = GeneralUtility::_POST('data')['tx_settings_form'];
-        if (is_array($forms)) {
-            foreach ($forms[array_keys($forms)[0]] as $fieldName => $fieldValue) {
-                if ($fieldName === 'pid') {
-                    continue;
-                }
-                $this->getConfigurationService()->set($fieldName, $fieldValue);
-            }
-        }
         $this->preInit();
         $this->init();
-        $this->main();
+        $currentPage = BackendUtility::getRecord('pages', GeneralUtility::_GP('id'));
+        if ($currentPage['is_siteroot']) {
+            $this->showForm();
+        } else {
+            $this->showRootPageSelector();
+        }
         $response->getBody()->write($this->moduleTemplate->renderContent());
         return $response;
+    }
+
+    protected function showForm()
+    {
+        $forms = GeneralUtility::_POST('data')['tx_settings_form'];
+        if (is_array($forms)) {
+            $submittedFormData = $forms[array_keys($forms)[0]];
+            $pid = $submittedFormData['pid'];
+            unset($submittedFormData['pid']);
+            foreach ($submittedFormData as $fieldName => $fieldValue) {
+                $this->getConfigurationService()->set($pid, $fieldName, $fieldValue);
+            }
+        }
+        $this->main();
     }
 
     public function main()
@@ -185,7 +196,10 @@ class FormController extends EditDocumentController
 
                                 ### MODIFICATION ###
                                 ### Prefill with existing data ###
-                                $formData['databaseRow'] = array_merge($formData['databaseRow'], $this->getConfigurationService()->getAllConfiguration());
+                                $formData['databaseRow'] = array_merge($formData['databaseRow'], $this->getConfigurationService()->getAllConfiguration(GeneralUtility::_GP('id')));
+                                ### Set effective pid
+                                $formData['effectivePid'] = GeneralUtility::_GP('id');
+                                $formData['databaseRow']['pid'] = GeneralUtility::_GP('id');
 
                                 $formData['renderType'] = 'outerWrapContainer';
                                 $formResult = $nodeFactory->create($formData)->render();
@@ -254,6 +268,38 @@ class FormController extends EditDocumentController
             $configurationService = GeneralUtility::makeInstance(ConfigurationService::class);
         }
         return $configurationService;
+    }
+
+    protected function showRootPageSelector()
+    {
+        $rootPages = $this->getDatabaseConnection()->exec_SELECTgetRows(
+            '*', 'pages', 'is_siteroot = 1 AND deleted = 0'
+        );
+        if (count($rootPages) === 1) {
+            $urlParameters = [
+                'id' => $rootPages[0]['uid']
+            ];
+            $aHref = BackendUtility::getModuleUrl('web_settings', $urlParameters);
+            HttpUtility::redirect($aHref);
+        } else {
+            if (count($rootPages) === 0) {
+                $content = '<h2>No root pages</h2>';
+                $content .= '<p>Website settings can only be applied to root pages. None have been found in this installation.</p>';
+            } else {
+                $content = '<h2>Choose root page</h2>';
+                $content .= '<p>Website settings can only be applied to root pages. Choose one of the following:</p>';
+                $content .= '<ul>';
+                foreach ($rootPages as $rootPage) {
+                    $urlParameters = [
+                        'id' => $rootPage['uid']
+                    ];
+                    $aHref = BackendUtility::getModuleUrl('web_settings', $urlParameters);
+                    $content .= '<li><a href="' . $aHref . '">' . $rootPage['title'] . '</a></li>';
+                }
+                $content .= '</ul>';
+            }
+            $this->moduleTemplate->setContent($content);
+        }
     }
 
 }
