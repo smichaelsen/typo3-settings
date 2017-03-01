@@ -25,6 +25,9 @@ class FormController extends EditDocumentController
         $forms = GeneralUtility::_POST('data')['tx_settings_form'];
         if (is_array($forms)) {
             foreach ($forms[array_keys($forms)[0]] as $fieldName => $fieldValue) {
+                if ($fieldName === 'pid') {
+                    continue;
+                }
                 $this->getConfigurationService()->set($fieldName, $fieldValue);
             }
         }
