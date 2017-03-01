@@ -5,6 +5,7 @@ $EM_CONF[$_EXTKEY] = array(
     'description' => 'User friendly settings module for editors',
     'category' => 'backend',
     'state' => 'stable',
+    'version' => '1.0.0',
     'author' => 'Sebastian Michaelsen',
     'author_email' => 'sebastian@app-zap.de',
     'author_company' => 'app-zap',
