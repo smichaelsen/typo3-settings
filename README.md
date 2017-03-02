@@ -52,6 +52,12 @@ All configured values are available as TypoScript constants in `plugin.tx_settin
 
     {namespace s=Smichaelsen\Settings\ViewHelpers}
     {s:getValue(name:'tx_myext_myfield')} or <s:getValue name="tx_myext_myfield"/>
+    
+and to load FAL resources:
+
+    <s:loadFalResources field="tx_myext_logo" as="logos">
+      <f:image image="{logos.0}"/>
+    </s:loadFalResources>
 
 ### 3. PHP ###
 
