@@ -44,7 +44,16 @@ Example (in `Configuration/TCA/Overrides/tx_settings_form.php`):
     
 ### Read configuration
 
+#### 1. TypoScript ###
+
 All configured values are available as TypoScript constants in `plugin.tx_settings`.
+
+### 2. Fluid ViewHelper ###
+
+    {namespace s=Smichaelsen\Settings\ViewHelpers}
+    {s:getValue(name:'tx_myext_myfield')} or <s:getValue name="tx_myext_myfield"/>
+
+### 3. PHP ###
 
 You can also access the values via PHP:
 
