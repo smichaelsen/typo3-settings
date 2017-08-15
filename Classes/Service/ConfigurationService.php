@@ -18,7 +18,7 @@ class ConfigurationService implements SingletonInterface
     protected $configuration;
 
     /**
-     * @param int
+     * @param int $pid
      * @return array
      */
     public function getAllConfiguration($pid)

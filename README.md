@@ -64,7 +64,7 @@ and to load FAL resources:
 You can also access the values via PHP:
 
     $configurationService = GeneralUtility::makeInstance(\Smichaelsen\Settings\Service\ConfigurationService::class);
-    $allConfiguration = $configurationService->getAllConfiguration($rootPageUid);
+    $allConfiguration = $configurationService->getAllConfiguration($GLOBALS['TSFE']->rootLine[0]['uid']);
 
 ## Known issues
 
